@@ -381,58 +381,58 @@ router.post("/exams/:id/incidents", async (req, res) => {
 
   return res.json(incident);
 });
-// ── POST /api/exams/:id/recording/start
-router.post("/exams/:id/recording/start", async (req, res) => {
-  const examId = req.params.id;
+// // ── POST /api/exams/:id/recording/start
+// router.post("/exams/:id/recording/start", async (req, res) => {
+//   const examId = req.params.id;
 
-  const exam = exams.get(examId);
+//   const exam = exams.get(examId);
 
-  if (!exam) return res.status(404).json({ error: "Not found" });
+//   if (!exam) return res.status(404).json({ error: "Not found" });
 
-  try {
-    const egress = await egressClient.startRoomCompositeEgress(exam.roomName, {
-      segments: new SegmentedFileOutput({
-        filenamePrefix: exam.roomName,
-        playlistName: exam.roomName + ".m3u8",
-        livePlaylistName: exam.roomName + "-live.m3u8",
-        segmentDuration: 2,
-        output: {
-          case: "s3",
-          value: {
-            accessKey: process.env.AWS_ACCESS_KEY,
-            secret: process.env.AWS_SECRET,
-            bucket: process.env.AWS_BUCKET,
-            region: process.env.AWS_REGION,
-          },
-        },
-      }),
-    });
+//   try {
+//     const egress = await egressClient.startRoomCompositeEgress(exam.roomName, {
+//       segments: new SegmentedFileOutput({
+//         filenamePrefix: exam.roomName,
+//         playlistName: exam.roomName + ".m3u8",
+//         livePlaylistName: exam.roomName + "-live.m3u8",
+//         segmentDuration: 2,
+//         output: {
+//           case: "s3",
+//           value: {
+//             accessKey: process.env.AWS_ACCESS_KEY,
+//             secret: process.env.AWS_SECRET,
+//             bucket: process.env.AWS_BUCKET,
+//             region: process.env.AWS_REGION,
+//           },
+//         },
+//       }),
+//     });
 
-    return res.json({ egressId: egress.egressId, status: "recording" });
-  } catch (err) {
-    console.error("Recording error:", err);
+//     return res.json({ egressId: egress.egressId, status: "recording" });
+//   } catch (err) {
+//     console.error("Recording error:", err);
 
-    return res.status(500).json({ error: String(err) });
-  }
-});
-// ── POST /api/exams/:id/recording/stop
-router.post("/exams/:id/recording/stop", async (req, res) => {
-  const examId = req.params.id;
+//     return res.status(500).json({ error: String(err) });
+//   }
+// });
+// // ── POST /api/exams/:id/recording/stop
+// router.post("/exams/:id/recording/stop", async (req, res) => {
+//   const examId = req.params.id;
 
-  const exam = exams.get(examId);
+//   const exam = exams.get(examId);
 
-  if (!exam) return res.status(404).json({ error: "Not found" });
+//   if (!exam) return res.status(404).json({ error: "Not found" });
 
-  const { egressId } = req.body as { egressId: string };
+//   const { egressId } = req.body as { egressId: string };
 
-  try {
-    await egressClient.stopEgress(egressId);
+//   try {
+//     await egressClient.stopEgress(egressId);
 
-    return res.json({ status: "stopped" });
-  } catch (err) {
-    return res.status(500).json({ error: String(err) });
-  }
-});
+//     return res.json({ status: "stopped" });
+//   } catch (err) {
+//     return res.status(500).json({ error: String(err) });
+//   }
+// });
 // ── POST /api/exams/:id/kick/:identity
 router.post("/exams/:id/kick/:identity", async (req, res) => {
   const examId = req.params.id;

@@ -1,0 +1,26 @@
+services:
+  livekit:
+    image: livekit/livekit-server:latest
+    command: --dev --bind 0.0.0.0
+    ports:
+      - "7880:7880"
+    environment:
+      LIVEKIT_KEYS: "devkey: secret"
+
+  redis:
+    image: redis:7
+    container_name: livekit-redis
+
+  egress:
+    image: livekit/egress:latest
+    container_name: livekit-egress
+    privileged: true # ← add this
+    depends_on:
+      - livekit
+      - redis
+    volumes:
+      - ./egress.yaml:/config.yaml
+      - ./recordings:/out
+    command: ["--config", "/config.yaml"]
+    environment:
+      EGRESS_CONFIG_FILE: /config.yaml # ← add this too
